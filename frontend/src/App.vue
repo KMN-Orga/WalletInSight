@@ -1,19 +1,39 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import Header from './components/Header.vue'
+import Savings from './components/Savings.vue'
+import ToggleCurrency from './components/ToggleCurrency.vue'
+
+const balance = ref(100);
+const currency = ref('€');
+
+onMounted(async () => {
+  type Balance = {
+    data: {
+    balance: number;
+    }
+  }
+  const response: Balance = await axios.get('http://localhost:3001/api/balance/get-actual-balance', {
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*'
+    }
+  });
+  console.log(response.data);
+  balance.value = response.data.balance;
+});
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+    <Header />
   </header>
 
   <main>
-    <TheWelcome />
+    <Savings :balance="balance" :currency="currency">
+    </Savings>
+    <ToggleCurrency v-model:currency="currency" />
   </main>
 </template>
 
@@ -27,21 +47,4 @@ header {
   margin: 0 auto 2rem;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
