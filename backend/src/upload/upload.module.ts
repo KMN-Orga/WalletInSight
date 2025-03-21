@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
+import { UploadResolver } from './upload.resolver';
 
-@Module({})
+@Module({
+  providers: [UploadResolver],
+})
 export class UploadModule {}
